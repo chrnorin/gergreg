@@ -1,322 +1,392 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>GoGetta GG</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#0b0f17;color:#fff}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0b0f17;
+  color:white;
+}
 
-/* AUTH */
-.auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#0b0f17;z-index:999}
-.box{background:#111827;padding:20px;border-radius:12px;display:flex;flex-direction:column;gap:10px}
-input,button{padding:10px;border-radius:8px;border:none}
-button{background:#2563eb;color:#fff}
+/* ---------- AUTH ---------- */
+.authScreen{
+  position:fixed;
+  inset:0;
+  background:#0b0f17;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+.authBox{
+  background:#111827;
+  padding:30px;
+  border-radius:16px;
+  width:300px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.authBox input{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  background:#1f2937;
+  color:white;
+}
+.authBtns{
+  display:flex;
+  gap:10px;
+}
+.authBtns button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+}
 
-/* NAV */
-.nav{display:flex;flex-wrap:wrap;gap:6px;padding:10px}
-.nav button{background:#1f2937}
+/* ---------- NAV ---------- */
+.nav{
+  display:flex;
+  gap:8px;
+  padding:10px;
+  flex-wrap:wrap;
+}
+.nav button{
+  padding:8px 12px;
+  border-radius:10px;
+  border:none;
+  background:#1f2937;
+  color:white;
+}
 
-/* TABS */
-.tab{display:none;padding:15px}
-.active{display:block}
+/* ---------- CONTENT ---------- */
+.tab{
+  display:none;
+  padding:15px;
+}
+.active{
+  display:block;
+}
 
-/* CARDS */
-.card{background:#111827;padding:10px;border-radius:10px;margin:6px 0}
+/* ---------- CARDS ---------- */
+.card{
+  background:#111827;
+  padding:12px;
+  border-radius:12px;
+  margin:6px 0;
+}
 
-/* FLEX */
-.flex{display:flex;gap:15px}
+/* ---------- CHECKLIST ---------- */
+.checkItem{
+  display:flex;
+  justify-content:space-between;
+  margin:4px 0;
+}
+.green{color:#22c55e;}
+.red{color:#ef4444;}
 
-/* CHECK */
-.green{color:#22c55e}
-.red{color:#ef4444}
+/* ---------- CALENDAR ---------- */
+.day{
+  border:1px solid #333;
+  padding:10px;
+  min-height:80px;
+}
 
-/* SKILL TREE */
-.node{border:1px solid #333;padding:6px;border-radius:8px;margin:4px;display:inline-block}
-.row{display:flex;overflow-x:auto;gap:10px}
+/* ---------- SKILLSMAP ---------- */
+.row{
+  display:flex;
+  overflow-x:auto;
+  gap:10px;
+}
+.skillBox{
+  min-width:200px;
+  background:#111827;
+  padding:10px;
+  border-radius:10px;
+}
 
-/* CALENDAR */
-.day{border:1px solid #333;width:14%;min-height:80px;padding:4px}
-.cal{display:flex;flex-wrap:wrap}
+/* ---------- RIGHT PANEL ---------- */
+.flex{
+  display:flex;
+  gap:20px;
+}
+.right{
+  width:40%;
+}
 </style>
 </head>
 
 <body>
 
 <!-- AUTH -->
-<div id="auth" class="auth">
-  <div class="box">
-    <input id="u" placeholder="Username">
-    <input id="p" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <button onclick="register()">Register</button>
+<div id="authScreen" class="authScreen">
+  <div class="authBox">
+    <h2>GoGetta GG</h2>
+    <input id="user" placeholder="Username">
+    <input id="pass" type="password" placeholder="Password">
+    <div class="authBtns">
+      <button onclick="login()">Login</button>
+      <button onclick="register()">Register</button>
+    </div>
     <div id="msg"></div>
   </div>
 </div>
 
 <!-- NAV -->
 <div class="nav">
-<button onclick="tab('profile')">👤</button>
-<button onclick="tab('skills')">📊</button>
-<button onclick="tab('skillsmap')">🧭</button>
-<button onclick="tab('missions')">🎯</button>
-<button onclick="tab('habits')">♻️</button>
-<button onclick="tab('goals')">🏆</button>
-<button onclick="tab('calendar')">📅</button>
-<button onclick="tab('appointments')">📍</button>
-<button onclick="tab('checklists')">✅</button>
-<button onclick="tab('notes')">📝</button>
-<button onclick="logout()">🚪</button>
+  <button onclick="showTab('profile')">👤 Profile</button>
+  <button onclick="showTab('mainskills')">📊 Skills</button>
+  <button onclick="showTab('skillsmap')">🧭 Map</button>
+  <button onclick="showTab('missions')">🎯 Missions</button>
+  <button onclick="showTab('habits')">♻️ Habits</button>
+  <button onclick="showTab('goals')">🏆 Goals</button>
+  <button onclick="showTab('calendar')">📅 Calendar</button>
+  <button onclick="showTab('appointments')">📍 Appointments</button>
+  <button onclick="showTab('checklists')">✅ Checklists</button>
+  <button onclick="showTab('investments')">💰 Investments</button>
+  <button onclick="showTab('notes')">📝 Notes</button>
+  <button onclick="logout()">🚪</button>
 </div>
 
 <!-- PROFILE -->
 <div id="profile" class="tab active">
-<h2>Profile</h2>
-<div id="combat"></div>
-</div>
-
-<!-- SKILLS -->
-<div id="skills" class="tab">
-<h2>Mainskills</h2>
-<div id="skillsList"></div>
+  <h2>Profile</h2>
+  <div id="combat"></div>
 </div>
 
 <!-- SKILLSMAP -->
 <div id="skillsmap" class="tab">
-<h2>Skills Map</h2>
-<div class="row" id="r1"></div>
-<div class="row" id="r2"></div>
+  <h2>Skills Map</h2>
+
+  <div class="row" id="row1"></div>
+  <div class="row" id="row2"></div>
 </div>
 
 <!-- APPOINTMENTS -->
 <div id="appointments" class="tab">
-<input id="atxt"><input type="date" id="adate">
-<button onclick="addAppt()">Add</button>
-<div id="alist"></div>
+  <h2>Appointments</h2>
+  <input id="apptText">
+  <input type="date" id="apptDate">
+  <button onclick="addAppointment()">Add</button>
+  <div id="apptList"></div>
 </div>
 
 <!-- CHECKLIST -->
 <div id="checklists" class="tab">
-<div class="flex">
-<div>
-<button onclick="newList()">+Checklist</button>
-<div id="cl"></div>
-</div>
-<div>
-<h3>Finished</h3>
-<div id="done"></div>
-</div>
-</div>
+  <h2>Checklists</h2>
+
+  <div class="flex">
+    <div>
+      <button onclick="addChecklist()">+ Checklist</button>
+      <div id="listContainer"></div>
+    </div>
+
+    <div class="right">
+      <h3>Finished</h3>
+      <div id="finishedLists"></div>
+    </div>
+  </div>
 </div>
 
 <!-- CALENDAR -->
 <div id="calendar" class="tab">
-<div class="cal" id="cal"></div>
+  <h2>Calendar</h2>
+  <div id="calendarGrid"></div>
 </div>
 
 <!-- NOTES -->
 <div id="notes" class="tab">
-<textarea id="nt" style="width:100%;height:200px"></textarea>
-<button onclick="save()">Save</button>
+  <textarea id="noteArea" style="width:100%;height:200px"></textarea>
+  <button onclick="saveNotes()">Save</button>
 </div>
 
 <script>
 
-/* STATE */
-let user=null;
+/* ---------- STATE ---------- */
 let state={
-skills:{},
-checklists:[],
-appointments:[],
-notes:""
+  checklists:[],
+  appointments:[],
+  notes:""
 };
 
-/* SKILLS INIT */
-const MS=["SOC","MEN","FIN","PHY","LEA","APP","DIE","SCH","HOM","CAR","SID","BUS","HOB","WOR","DAT"];
-MS.forEach(s=>state.skills[s]={name:s,subs:[]});
+/* ---------- AUTH ---------- */
+let currentUser=null;
 
-/* AUTH */
+function initAuth(){
+  let u=localStorage.getItem("user");
+  if(u){
+    currentUser=u;
+    load();
+    authScreen.style.display="none";
+  }
+}
+
 function register(){
-let us=JSON.parse(localStorage.users||"{}");
-us[u.value]={p:p.value,data:null};
-localStorage.users=JSON.stringify(us);
-msg.innerText="registered";
+  let users=JSON.parse(localStorage.getItem("users")||"{}");
+  users[user.value]={pass:pass.value,data:null};
+  localStorage.setItem("users",JSON.stringify(users));
+  msg.innerText="Registered";
 }
 
 function login(){
-let us=JSON.parse(localStorage.users||"{}");
-if(us[u.value]&&us[u.value].p==p.value){
-user=u.value;
-localStorage.current=user;
-load();
-auth.style.display="none";
-}else msg.innerText="wrong";
+  let users=JSON.parse(localStorage.getItem("users")||"{}");
+  if(users[user.value] && users[user.value].pass===pass.value){
+    currentUser=user.value;
+    localStorage.setItem("user",currentUser);
+    load();
+    authScreen.style.display="none";
+  } else msg.innerText="Wrong";
 }
 
-function logout(){localStorage.removeItem("current");location.reload()}
-
-function init(){
-if(localStorage.current){
-user=localStorage.current;
-load();
-auth.style.display="none";
-}
+function logout(){
+  localStorage.removeItem("user");
+  location.reload();
 }
 
-/* SAVE LOAD */
+/* ---------- SAVE LOAD ---------- */
 function save(){
-let us=JSON.parse(localStorage.users||"{}");
-us[user].data=state;
-localStorage.users=JSON.stringify(us);
+  let users=JSON.parse(localStorage.getItem("users")||"{}");
+  users[currentUser].data=state;
+  localStorage.setItem("users",JSON.stringify(users));
 }
-
 function load(){
-let us=JSON.parse(localStorage.users||"{}");
-if(us[user].data)state=us[user].data;
-render();
+  let users=JSON.parse(localStorage.getItem("users")||"{}");
+  if(users[currentUser].data) state=users[currentUser].data;
+  renderAll();
 }
 
-/* TABS */
-function tab(t){
-document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-document.getElementById(t).classList.add("active");
+/* ---------- TABS ---------- */
+function showTab(id){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-/* SKILLS */
-function renderSkills(){
-skillsList.innerHTML="";
-for(let k in state.skills){
-let s=state.skills[k];
-let div=document.createElement("div");
-div.className="card";
-div.innerHTML=`<b>${k}</b><button onclick="addSub('${k}')">+</button>`;
-
-s.subs.forEach(sub=>{
-let d=document.createElement("div");
-d.className="node";
-d.innerHTML=sub.name;
-
-sub.items?.forEach(i=>{
-let span=document.createElement("div");
-span.innerHTML=i.name;
-d.appendChild(span);
-});
-
-div.appendChild(d);
-});
-
-skillsList.appendChild(div);
-}
-}
-
-function addSub(k){
-let name=prompt("subskill");
-state.skills[k].subs.push({name,items:[]});
-save();render();
-}
-
-/* MISSIONS / HABITS beside subskills */
-function addItem(sub){
-let n=prompt("mission/habit");
-sub.items.push({name:n});
-save();render();
-}
-
-/* SKILLSMAP */
-function renderMap(){
-let a=["SOC","MEN","FIN","CAR","SID","BUS","HOB","SCH"];
-let b=["PHY","LEA","APP","DIE","HOM","WOR","DAT"];
-
-r1.innerHTML=a.map(x=>`<div class="card">${x}</div>`).join("");
-r2.innerHTML=b.map(x=>`<div class="card">${x}</div>`).join("");
-}
-
-/* CHECKLIST */
-function newList(){
-state.checklists.push({tasks:[]});
-save();render();
+/* ---------- CHECKLIST ---------- */
+function addChecklist(){
+  state.checklists.push({name:"New",tasks:[],done:false});
+  save(); renderAll();
 }
 
 function addTask(i){
-let t=prompt("task");
-state.checklists[i].tasks.push({t,s:0});
-save();render();
+  let t=prompt("Task");
+  state.checklists[i].tasks.push({text:t,status:0});
+  save(); renderAll();
 }
 
-function set(i,j,v){
-state.checklists[i].tasks[j].s=v;
-save();render();
+function setTask(i,j,val){
+  state.checklists[i].tasks[j].status=val;
+  save(); renderAll();
 }
 
-function renderCL(){
-cl.innerHTML="";done.innerHTML="";
-state.checklists.forEach((c,i)=>{
-let d=document.createElement("div");
-d.className="card";
-d.innerHTML=`<button onclick="addTask(${i})">+</button>`;
+function renderChecklists(){
+  listContainer.innerHTML="";
+  finishedLists.innerHTML="";
 
-c.tasks.forEach((t,j)=>{
-let row=document.createElement("div");
-row.innerHTML=`${t.t}
-<button onclick="set(${i},${j},1)">✔</button>
-<button onclick="set(${i},${j},-1)">❌</button>`;
-if(t.s==1)row.className="green";
-if(t.s==-1)row.className="red";
-d.appendChild(row);
-});
+  state.checklists.forEach((c,i)=>{
+    let div=document.createElement("div");
+    div.className="card";
 
-if(c.tasks.every(t=>t.s!=0))done.appendChild(d);
-else cl.appendChild(d);
-});
+    div.innerHTML=`
+      <b>${c.name}</b>
+      <button onclick="addTask(${i})">+</button>
+    `;
+
+    c.tasks.forEach((t,j)=>{
+      let d=document.createElement("div");
+      d.className="checkItem";
+      d.innerHTML=`
+        ${t.text}
+        <div>
+          <button onclick="setTask(${i},${j},1)">✔</button>
+          <button onclick="setTask(${i},${j},-1)">❌</button>
+        </div>
+      `;
+      if(t.status==1)d.classList.add("green");
+      if(t.status==-1)d.classList.add("red");
+
+      div.appendChild(d);
+    });
+
+    if(c.tasks.every(t=>t.status!=0)){
+      finishedLists.appendChild(div);
+    } else listContainer.appendChild(div);
+  });
 }
 
-/* APPOINTMENTS */
-function addAppt(){
-state.appointments.push({t:atxt.value,d:adate.value});
-save();render();
+/* ---------- APPOINTMENTS ---------- */
+function addAppointment(){
+  state.appointments.push({
+    text:apptText.value,
+    date:apptDate.value
+  });
+  save(); renderAll();
 }
 
-function renderAppt(){
-alist.innerHTML="";
-state.appointments.forEach(a=>{
-alist.innerHTML+=a.d+" "+a.t+"<br>";
-});
+function renderAppointments(){
+  apptList.innerHTML="";
+  state.appointments.forEach(a=>{
+    apptList.innerHTML+=`<div>${a.date} - ${a.text}</div>`;
+  });
 }
 
-/* CALENDAR */
-function renderCal(){
-cal.innerHTML="";
-for(let i=1;i<=30;i++){
-let d=document.createElement("div");
-d.className="day";
-d.innerHTML=i;
+/* ---------- CALENDAR ---------- */
+function renderCalendar(){
+  calendarGrid.innerHTML="";
+  for(let i=1;i<=30;i++){
+    let d=document.createElement("div");
+    d.className="day";
+    d.innerHTML=i;
 
-state.appointments.forEach(a=>{
-if(a.d.endsWith("-"+String(i).padStart(2,"0")))
-d.innerHTML+="<div style='color:red'>"+a.t+"</div>";
-});
+    state.appointments.forEach(a=>{
+      if(a.date.endsWith("-"+String(i).padStart(2,"0"))){
+        d.innerHTML+=`<div style="color:red">${a.text}</div>`;
+      }
+    });
 
-cal.appendChild(d);
+    calendarGrid.appendChild(d);
+  }
 }
+
+/* ---------- NOTES ---------- */
+function saveNotes(){
+  state.notes=noteArea.value;
+  save();
 }
 
-/* PROFILE */
+/* ---------- SKILLSMAP ---------- */
+function renderSkillsMap(){
+  let r1=["SOC","MEN","FIN","CAR","SID","BUS","HOB","SCH"];
+  let r2=["PHY","LEA","APP","DIE","HOM","WOR","DAT"];
+
+  row1.innerHTML=r1.map(s=>`<div class="skillBox">${s}</div>`).join("");
+  row2.innerHTML=r2.map(s=>`<div class="skillBox">${s}</div>`).join("");
+}
+
+/* ---------- PROFILE ---------- */
 function renderProfile(){
-combat.innerText="Combat Level (cb): 3";
+  combat.innerText="Combat Level (cb): 3";
 }
 
-/* RENDER */
-function render(){
-renderSkills();
-renderMap();
-renderCL();
-renderAppt();
-renderCal();
-renderProfile();
+/* ---------- RENDER ---------- */
+function renderAll(){
+  renderChecklists();
+  renderAppointments();
+  renderCalendar();
+  renderSkillsMap();
+  renderProfile();
 }
 
-/* START */
-init();
+/* ---------- START ---------- */
+initAuth();
 
 </script>
 
