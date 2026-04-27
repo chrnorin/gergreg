@@ -286,17 +286,6 @@
 </head>
 
 <body>
-
-<div id="authOverlay" style="position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:9999;">
-<div style="background:#111;padding:20px;border-radius:16px;width:280px">
-<h2>GoGetta GG</h2>
-<input id="loginUser" placeholder="Username">
-<input id="loginPass" type="password" placeholder="Password">
-<button onclick="loginUserFn()">Login</button>
-<button onclick="registerUserFn()">Register</button>
-<div id="loginMsg"></div>
-</div></div>
-
 <div class="app">
   <header>
     <div class="topbar">
@@ -468,9 +457,7 @@ function cryptoId(){
 /* =========================
    STATE
 ========================= */
-let CURRENT_USER=null;
-const BASE_STORE_KEY = "gogetta_tree_v7_calendar_stats_colors_icons";
-function getStoreKey(){ return CURRENT_USER ? BASE_STORE_KEY + "_" + CURRENT_USER : BASE_STORE_KEY;}
+const STORE_KEY = "gogetta_tree_v7_calendar_stats_colors_icons";
 
 function defaultState(){
   const skills = {};
@@ -519,7 +506,7 @@ function defaultState(){
 
 function loadState(){
   try{
-    const raw = localStorage.getItem(getStoreKey());
+    const raw = localStorage.getItem(STORE_KEY);
     if (!raw) return defaultState();
     const st = JSON.parse(raw);
 
@@ -583,7 +570,7 @@ function loadState(){
 }
 
 let state = loadState();
-function saveState(){ localStorage.setItem(getStoreKey(), JSON.stringify(state)); }
+function saveState(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
 /* =========================
    TREE HELPERS
@@ -1435,7 +1422,13 @@ function renderMainTreeGraph(mainCode, mountEl){
     }
   }
 
-  function draw(){/*disabled*/} ${h}`);
+  function drawLines(){
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const w = stage.offsetWidth;
+    const h = stage.offsetHeight;
+    svg.setAttribute("width", w);
+    svg.setAttribute("height", h);
+    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
 
     // Subskill edges
     for (const [fromId, toId] of layout.edges){
@@ -2782,7 +2775,17 @@ function screenStats(){
   const canvas = root.querySelector("#chart");
   const ctx = canvas.getContext("2d");
 
-  function draw(){/*disabled*/}
+  function draw(){
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    // Background grid
+    ctx.globalAlpha = 0.9;
+    ctx.strokeStyle = "rgba(255,255,255,0.08)";
+    for (let i=0;i<=10;i++){
+      const y = 20 + i*(H-40)/10;
+      ctx.beginPath(); ctx.moveTo(40,y); ctx.lineTo(W-10,y); ctx.stroke();
+    }
     for (let i=0;i<=10;i++){
       const x = 40 + i*(W-60)/10;
       ctx.beginPath(); ctx.moveTo(x,20); ctx.lineTo(x,H-20); ctx.stroke();
@@ -3120,102 +3123,6 @@ document.getElementById("notesBtnTop").onclick = ()=>{
 };
 
 render();
-</script>
-
-<script>
-function initLogin(){
-const saved = localStorage.getItem("GG_user");
-if(saved){
-CURRENT_USER = saved;
-document.getElementById("authOverlay").style.display="none";
-}
-}
-function registerUserFn(){
-const u=loginUser.value.trim();
-const p=loginPass.value.trim();
-let users=JSON.parse(localStorage.GG_users||"{}");
-if(users[u]){loginMsg.innerText="exists";return;}
-users[u]={p};
-localStorage.GG_users=JSON.stringify(users);
-loginMsg.innerText="registered";
-}
-function loginUserFn(){
-const u=loginUser.value.trim();
-const p=loginPass.value.trim();
-let users=JSON.parse(localStorage.GG_users||"{}");
-if(!users[u]||users[u].p!==p){loginMsg.innerText="wrong";return;}
-CURRENT_USER=u;
-localStorage.GG_user=u;
-document.getElementById("authOverlay").style.display="none";
-location.reload();
-}
-initLogin();
-</script>
-
-
-<div id="checklistsTab" style="display:none;padding:20px">
-<h2>Checklists</h2>
-<button onclick="addChecklist()">Add Checklist</button>
-<div id="checklists"></div>
-</div>
-
-<script>
-let checklists = JSON.parse(localStorage.getItem("GG_checklists")||"[]");
-
-function saveChecklists(){
-localStorage.setItem("GG_checklists", JSON.stringify(checklists));
-renderChecklists();
-}
-
-function addChecklist(){
-const name = prompt("Checklist name?");
-if(!name) return;
-checklists.push({name, tasks:[]});
-saveChecklists();
-}
-
-function addTask(i){
-const t = prompt("Task?");
-if(!t) return;
-checklists[i].tasks.push({text:t,done:false,fail:false});
-saveChecklists();
-}
-
-function toggleTask(i,j){
-checklists[i].tasks[j].done=!checklists[i].tasks[j].done;
-checklists[i].tasks[j].fail=false;
-saveChecklists();
-}
-
-function failTask(i,j){
-checklists[i].tasks[j].fail=!checklists[i].tasks[j].fail;
-checklists[i].tasks[j].done=false;
-saveChecklists();
-}
-
-function renderChecklists(){
-const el=document.getElementById("checklists");
-if(!el) return;
-el.innerHTML="";
-checklists.forEach((c,i)=>{
-let div=document.createElement("div");
-div.style.border="1px solid #555";
-div.style.margin="10px";
-div.style.padding="10px";
-div.innerHTML=`<b>${c.name}</b> <button onclick="addTask(${i})">+</button>`;
-c.tasks.forEach((t,j)=>{
-let color=t.done?"green":t.fail?"red":"white";
-div.innerHTML+=`<div style="color:${color}">
-${t.text}
-<button onclick="toggleTask(${i},${j})">✔</button>
-<button onclick="failTask(${i},${j})">✖</button>
-</div>`;
-});
-el.appendChild(div);
-});
-}
-
-renderChecklists();
 </script>
 </body>
 </html>
